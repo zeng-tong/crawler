@@ -1,8 +1,8 @@
 import requests
-from bs4 import BeautifulSoup
 import re
+from bs4 import BeautifulSoup
 
-DOMIN = 'https://stackshare.io'
+from stackshare import constants
 
 
 def get_categories(category=None):
@@ -10,7 +10,7 @@ def get_categories(category=None):
     if category is None:
         category = '/categories'
 
-    categories_page = requests.get(DOMIN + category)
+    categories_page = requests.get(constants.DOMIN + category)
 
     html = categories_page.text
 
@@ -29,7 +29,7 @@ def get_categories(category=None):
 def get_apps_ids(url_category=None):
     if url_category is None:
         return []
-    category_html = requests.get(DOMIN + url_category).text
+    category_html = requests.get(constants.DOMIN + url_category).text
 
     soup = BeautifulSoup(category_html, 'lxml')
 
@@ -40,7 +40,5 @@ def get_apps_ids(url_category=None):
     ids = re.sub(r'.*=', "", ids_script)
 
     return eval(ids)
-
-print(get_apps_ids('/application_and_data'))
 
 
