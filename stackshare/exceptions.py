@@ -5,7 +5,10 @@ class BaseCustomException(Exception):
     def __init__(self, msg=None, name=None):
         super(BaseCustomException, self).__init__()
         self._msg = msg
-        self._name = name
+        self._name = u""
+
+    def __str__(self):
+        return "{}: msg='{}'".format(self.__class__.__name__, self._msg)
 
     @property
     def msg(self):
@@ -14,6 +17,12 @@ class BaseCustomException(Exception):
     @property
     def name(self):
         return self._name
+
+    @property
+    def info(self):
+        return {'error': {
+            'message': self._msg
+        }}
 
 
 class AlreadyExistException(BaseCustomException):

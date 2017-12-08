@@ -11,3 +11,4 @@ script:
   - chmod +x stackshare/*
   - bin/bs4 stackshare/categoriesPage.py
   - bin/bs4 stackshare/picGetter.py
+  - bin/bs4 stackshare/itemInfoGetter.py
