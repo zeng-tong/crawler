@@ -16,7 +16,7 @@ class PicGetter:
         datasource = {'ids[]': []}
         for app_id in ids:
             datasource['ids[]'].append(app_id)
-        req = requests.post(constants.DOMIN + category + '/load-more', data=datasource)
+        req = requests.post(constants.DOMAIN + category + '/load-more', data=datasource)
 
         soup = BeautifulSoup(req.text, 'lxml')
 
