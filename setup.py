@@ -4,7 +4,8 @@ from setuptools import find_packages, setup
 install_requires = [
     'beautifulsoup4',
     'lxml',
-    'requests'
+    'requests',
+    'stackshare'
 ]
 
 setup(
