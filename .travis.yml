@@ -1,0 +1,13 @@
+language: python
+python:
+  - 3.6
+
+sudo: enabled
+
+install:
+  - python bootstrap-buildout.py
+  - bin/buildout
+script:
+  - chmod +x stackshare/*
+  - bin/bs4 stackshare/categoriesPage.py
+  - bin/bs4 stackshare/picGetter.py
