@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 import requests
 from bs4 import BeautifulSoup
+from stackshare.models.stacks import Stacks
 from stackshare import constants
 from stackshare.exceptions import InvalidValueException
 
@@ -8,13 +10,34 @@ from stackshare.exceptions import InvalidValueException
 class ItemInfo:
 
     __app_url = ''
+    response = None
 
     APP_INFO_TYPE_MAP = {
         'fans': '/fans/ajax',
         'votes': '/overview/ajax',
         'stacks': '/in-stacks/ajax',
-        'integrations': '/integrations/ajax'
+        'integrations': '/integrations/ajax',
+        'star': 'star'
     }
+
+    def get_stacks(self):
+        try:
+            res = {
+                'contents': json.dumps(self.contents()),
+                'description': self.description(),
+                'star_count': self.count(count_type='star'),
+                'votes_count': self.count(count_type='votes'),
+                'fans_count': self.count(count_type='fans'),
+                'stacks_count': self.count(count_type='stacks'),
+                'integrations_count': self.count(count_type='integrations')
+            }
+            return Stacks(contents=res['contents'], description=res['description'],
+                          star_count=res['star_count'], votes_count=res['votes_count'],
+                          stacks_count=res['stacks_count'],fans_count=res['fans_count'],
+                          integrations_count=res['integrations_count'])
+        except Exception as e:
+            print(e)
+            return None
 
     def __init__(self, app_url):
         self.__app_url = app_url
@@ -41,24 +64,19 @@ class ItemInfo:
         else:
             return None
 
-    # 获取 star 数量
-    def star_count(self):
-        response = self.__check_url(self.__app_url)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'lxml')
-            return soup.find('div', 'star-count').get_text()
-        else:
-            return None
-
-    # 获取 Votes, Fans, Stacks, Integrations 数量
+    # 获取 Stars, Votes, Fans, Stacks, Integrations 数量
     def count(self, count_type=None):
         if count_type not in self.APP_INFO_TYPE_MAP:
             raise InvalidValueException('count_type error')
         response = self.__check_url(self.__app_url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'lxml')
-            label, vote_cnt = soup.select('a[data-href=%s%s]' % (self.__app_url, self.APP_INFO_TYPE_MAP[count_type]))[0].stripped_strings
-            return vote_cnt
+            if count_type == 'star':
+                return soup.find('div', 'star-count').get_text()
+            else:
+                label, cnt = soup.select('a[data-href=%s%s]' % (self.__app_url, self.APP_INFO_TYPE_MAP[count_type]))[
+                    0].stripped_strings
+            return cnt
         else:
             return None
 
@@ -86,13 +104,12 @@ class ItemInfo:
         else:
             return None
 
-    @staticmethod
-    def __check_url(app_url):
+    @classmethod
+    def __check_url(cls, app_url):
         if app_url is None:
             raise InvalidValueException(msg='app_url cannot be null')
-        return requests.get(constants.DOMAIN + app_url)
-
-item = ItemInfo('/bootstrap')
-print(item.count('fans'))
-
-
+        if cls.response:
+            return cls.response
+        else:
+            cls.response = requests.get(constants.DOMAIN + app_url)
+            return cls.response
