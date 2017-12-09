@@ -9,6 +9,6 @@ install:
   - bin/buildout
 script:
   - chmod +x stackshare/*
-  - bin/bs4 stackshare/categoriesPage.py
+  - bin/bs4 stackshare/get_item.py
   - bin/bs4 stackshare/picGetter.py
-  - bin/bs4 stackshare/itemInfoGetter.py
+  - bin/bs4 stackshare/item_info.py

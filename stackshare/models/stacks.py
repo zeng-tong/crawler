@@ -18,6 +18,7 @@ class Stacks(Base):
     stacks_count = Column(String)
     integrations_count = Column(String)
     companies = Column(String)
+    name = Column(String)
 
     def __repr__(self):
         return str(self.__dict__)
