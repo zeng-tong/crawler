@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import requests
 import re
+
+import requests
 from bs4 import BeautifulSoup
 
-from stackshare import constants
+from stackshare.src import constants
 
 
 def get_categories(category=None):

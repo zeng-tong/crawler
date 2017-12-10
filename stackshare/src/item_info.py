@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
+
 import requests
 from bs4 import BeautifulSoup
+from stackshare.src.exceptions import InvalidValueException, RequestErrorException
+
 from stackshare.models.stacks import Stacks
-from stackshare import constants
-from stackshare.exceptions import InvalidValueException, RequestErrorException
+from stackshare.src import constants
 
 
 class itemInfo:
