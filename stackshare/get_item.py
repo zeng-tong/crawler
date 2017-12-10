@@ -31,10 +31,18 @@ def get_categories(category=None):
 def get_items_ids(url_category=None):
     if url_category is None:
         return []
-    category_html = requests.get(constants.DOMAIN + url_category).text
-    soup = BeautifulSoup(category_html, 'lxml')
-    ids = re.search(r'ordered_service_ids = (.*)?]', soup.text, re.M).group(0).replace('ordered_service_ids = ', '')
-    return eval(ids)
+    response = requests.get(constants.DOMAIN + url_category)
+    ids = []
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'lxml')
+        try:
+            ids = re.search(r'ordered_service_ids = (.*)?]', soup.text, re.M).group(0).replace('ordered_service_ids = ', '')
+        except Exception as e:
+            print(e)
+        finally:
+            return ids
+    else:
+        return ids
 
 
 # 通过app_id获取 url 和 app_name

@@ -7,7 +7,8 @@ install_requires = [
     'requests',
     'stackshare',
     'sqlalchemy',
-    'PyMySQL'
+    'PyMySQL',
+    'redis'
 ]
 
 setup(
