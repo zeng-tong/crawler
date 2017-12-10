@@ -1,9 +1,8 @@
-# -*-coding: utf-8 -*-
-from config import mysql_session
-from stackshare.item_info import itemInfo
+# -*- coding: utf-8 -*-
 from stackshare import get_item
+from stackshare.item_info import itemInfo
+from stackshare.utils import mysql_session
 
-session = mysql_session()
 categories = get_item.get_categories()
 
 
@@ -15,11 +14,15 @@ def start(start_pos, end_pos):
             limit_ids.append(ids[i])
         items = get_item.get_item(limit_ids, category)
         for item in items:
-            item = itemInfo(app_url=item['url'], name=item['name'])
-            stacks = item.get_stacks()
-            session.add(stacks)
-            session.commit()
-            session.close()
+            try:
+                session = mysql_session()
+                item = itemInfo(app_url=item['url'], name=item['name'])
+                stacks = item.get_stacks()
+                session.add(stacks)
+                session.commit()
+                session.close()
+            except Exception as e:
+                print(e)
 
 
 if __name__ == '__main__':

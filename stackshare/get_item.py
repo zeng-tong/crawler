@@ -40,7 +40,7 @@ def get_items_ids(url_category=None):
         except Exception as e:
             print(e)
         finally:
-            return ids
+            return eval(ids)
     else:
         return ids
 
