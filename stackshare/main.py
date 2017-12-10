@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from stackshare import get_item
+from stackshare.exceptions import InvalidValueException
 from stackshare.item_info import itemInfo
 from stackshare.utils import mysql_session
 
@@ -9,10 +10,16 @@ categories = get_item.get_categories()
 def start(start_pos, end_pos):
     for category in categories:
         ids = get_item.get_items_ids(category)
-        limit_ids = []
+        if start_pos > len(ids):
+            raise InvalidValueException(msg='Under category %s list ids max lenth is %s' % (category, len(ids)))
+        if end_pos > len(ids):
+            end_pos = len(ids) - 1
+
+        slice_ids = []
         for i in range(start_pos, end_pos):
-            limit_ids.append(ids[i])
-        items = get_item.get_item(limit_ids, category)
+            slice_ids.append(ids[i])
+
+        items = get_item.get_item(slice_ids, category)
         for item in items:
             try:
                 session = mysql_session()
@@ -20,9 +27,11 @@ def start(start_pos, end_pos):
                 stacks = item.get_stacks()
                 session.add(stacks)
                 session.commit()
+                print(stacks.name + ' succed...')
                 session.close()
             except Exception as e:
                 print(e)
+    print('Process finished...')
 
 
 if __name__ == '__main__':

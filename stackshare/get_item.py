@@ -37,10 +37,11 @@ def get_items_ids(url_category=None):
         soup = BeautifulSoup(response.text, 'lxml')
         try:
             ids = re.search(r'ordered_service_ids = (.*)?]', soup.text, re.M).group(0).replace('ordered_service_ids = ', '')
+            ids = eval(ids)
         except Exception as e:
-            print(e)
+            print(url_category + ' cannot get app\'s ids, and had skipped.')
         finally:
-            return eval(ids)
+            return ids
     else:
         return ids
 
