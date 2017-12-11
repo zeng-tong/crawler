@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from stackshare.src.constants import CONSUMED
-from stackshare.src.utils import py_redis, toRedisKey, toConsumedKey
+from stackshare.src.utils import PyRedis, toProducerKey, toConsumedKey
 
 from stackshare.src import get_item
 
@@ -9,27 +9,41 @@ from stackshare.src.utils import mysql_session
 from stackshare.src.item_info import itemInfo
 
 
-redis = py_redis().get_resource()
-
-categories = get_item.get_categories()
+redis = PyRedis().get_resource()
 
 
 # Hash 中存储已经爬取过的id
 # list 中存储待爬取的id
 def start(category):
-        _id = redis.lpop(category)
+        # 从 set 获取 待爬取 _id
+        _id = redis.spop(toProducerKey(category))
         while _id:
-            item = get_item.get_item(list(_id), category)
-            try:
-                session = mysql_session()
-                item_info = itemInfo(app_url=item['url'], name=item['name'])
-                stacks = item_info.get_stacks()
-                session.add(stacks)
-                session.commit()
-                session.close()
-                print(stacks.name + ' succed...')
-                redis.hset(toConsumedKey(category), _id, CONSUMED)
-            except Exception as e:
-                redis.lpush(toRedisKey(category), _id)
-                print(e)
+            _id = int(_id)
+            if redis.hexists(toConsumedKey(category), _id):
+                print('id %s under category %s had already exist in consumed hash, now skipped...' % (_id, category))
+                continue
+            items = get_item.get_item([_id], category)
+            for item in items:
+                try:
+                    session = mysql_session()
+                    session.expunge_all()
+                    item_info = itemInfo(app_url=item['url'], name=item['name'])
+                    stacks = item_info.get_stacks()
+                    session.add(stacks)
+                    session.commit()
+                    print(item['name'] + ' save to mysql succeed...')
+                    # 将 _id 加入已爬取 hash. 避免重复爬取
+                    redis.hset(name=toConsumedKey(category), key=_id, value=CONSUMED)
+                except Exception as e:
+                    # redis.sadd(toProducerKey(category), _id)
+                    print(e)
+                    print('id %s under category %s insert error.Please noticing.' % (_id, category))
+                    continue
+                finally:
+                    session.close()
+            _id = redis.spop(toProducerKey(category))
         print('Process finished...')
+
+
+if __name__ == '__main__':
+    start('/application_and_data')

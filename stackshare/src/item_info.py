@@ -36,7 +36,7 @@ class itemInfo:
             }
             return Stacks(contents=res['contents'], description=res['description'],
                           star_count=res['star_count'], votes_count=res['votes_count'],
-                          stacks_count=res['stacks_count'],fans_count=res['fans_count'],
+                          stacks_count=res['stacks_count'], fans_count=res['fans_count'],
                           integrations_count=res['integrations_count'], name=self.name)
         except Exception as e:
             print(e)
@@ -44,7 +44,7 @@ class itemInfo:
 
     def __init__(self, app_url, name=None):
         self.__app_url = app_url
-        self.__check_url(app_url=app_url)
+        self.__check_url()
         if name is not None:
             self.name = name
         else:
@@ -96,11 +96,10 @@ class itemInfo:
             page = requests.post(url, data=payload)
         return companies
 
-    @classmethod
-    def __check_url(cls, app_url):
-        if app_url is None:
+    def __check_url(self):
+        if self.__app_url is None:
             raise InvalidValueException(msg='app_url cannot be null')
-        response = requests.get(constants.DOMAIN + app_url)
+        response = requests.get(constants.DOMAIN + self.__app_url)
         if response.status_code != 200:
             raise RequestErrorException(msg=response.status_code)
-        cls.__soup = BeautifulSoup(response.text, 'lxml')
+        self.__soup = BeautifulSoup(response.text, 'lxml')

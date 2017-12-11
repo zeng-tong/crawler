@@ -64,5 +64,6 @@ def get_item(ids=None, url_category=None):
         })
     return res
 
+
 if __name__ == '__main__':
     print(get_item([18, 1171], '/application_and_data'))

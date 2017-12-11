@@ -6,17 +6,17 @@ from sqlalchemy.orm import sessionmaker
 
 from stackshare.src.exceptions import RequestErrorException
 
-engine = create_engine('mysql+pymysql://root:123456@138.197.95.94/stackshare?charset=utf8')
 
 def mysql_session():
+    engine = create_engine('mysql+pymysql://root:123456@138.197.95.94/stackshare?charset=utf8')
     DBSession = sessionmaker(bind=engine)
     return DBSession()
+
 
 redis_pool = redis.ConnectionPool(host='138.197.95.94', port=6379)
 
 
-class py_redis:
-
+class PyRedis:
     def __init__(self):
         self.__redis_pool = redis_pool
 
@@ -26,16 +26,20 @@ class py_redis:
         except Exception as e:
             raise RequestErrorException(msg=str(e))
 
+    def __repr__(self):
+        return str(self.__dict__)
 
-def toRedisKey(category):
+
+def toProducerKey(category):
     return str(category).replace('/', '')
 
 
 def toConsumedKey(category):
-    return 'consumed_' + toRedisKey(category)
+    return 'consumed_' + toProducerKey(category)
+
 
 if __name__ == '__main__':
-    pyredis = py_redis()
+    pyredis = PyRedis()
     redis = pyredis.get_resource()
     redis.lpush('test', 'test xxxx')
     print(redis.lpop('test'))

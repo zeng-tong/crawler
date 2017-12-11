@@ -10,3 +10,13 @@ open Preference -> Build, Execution, Deployment -> Buildout Support -> Enable bu
 ### Hint: 
 - 统一在参数的 URL 前加 : "/" , 代码里的 DOMAIN 结尾默认都无 "/"
 - pycharm 运行请注意 Working directory为 __crawler__ 而不是 __crawler/stackshare__
+
+### 启动
+- p.s: 启动之前，必须安装依赖.
+
+- 获取待爬取 id 并存入redis:
+    - `bin/bs4 stackshare/main.py -p`
+    - `bin/bs4 stackshare/main.py --prodecer`
+- 从 redis 中获取 id 并爬取数据:
+    - `bin/bs4 stackshare/main.py -c`
+    - `bin/bs4 stackshare/main.py --consumer`
