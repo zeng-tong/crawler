@@ -60,6 +60,7 @@ def get_item(ids=None, url_category=None):
     for data in soup.find_all('div', 'thumbnail-home'):
         res.append({
             'url': data.find('a')['href'],
-            'name': data.find('span', itemprop='keywords').get_text()
+            'name': data.find('span', itemprop='keywords').get_text(),
+            'id': data.find('td', id='reasons-list-tile')['data-service-id']
         })
     return res

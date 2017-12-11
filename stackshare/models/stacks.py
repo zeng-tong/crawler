@@ -7,7 +7,7 @@ Base = declarative_base()
 
 class Stacks(Base):
 
-    __tablename__ = 'stacks'
+    __tablename__ = 'stacks_edition'
 
     id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
     contents = Column(String)

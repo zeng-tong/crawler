@@ -6,6 +6,8 @@ import sys
 import getopt
 
 from stackshare import consumer, producer
+from stackshare.consumer import consume
+from stackshare.producer import produce
 
 from stackshare.src import get_item
 
@@ -19,11 +21,6 @@ from config import GetLogger
 #     i = input()
 #     consume = consumer.start(categories[i])
 
-
-def crawl():
-    categories = get_item.get_categories()
-    for category in categories:
-        consumer.start(category)
 
 
 def main(argv):
@@ -44,9 +41,8 @@ def main(argv):
         if opt in ("-p", "--producer"):
             logger.info(msg='producer start working...')
             try:
-                # consumer.start()
-                t1 = threading.Thread(target=producer.start)
-                t2 = threading.Thread(target=producer.start)
+                t1 = threading.Thread(target=produce().start)
+                t2 = threading.Thread(target=produce().start)
                 t1.start()
                 t2.start()
                 t1.join()
@@ -56,9 +52,8 @@ def main(argv):
         elif opt in ("-c", "--consumer"):
             logger.info(msg='consumer start working...')
             try:
-                # producer.start()
-                t1 = threading.Thread(target=crawl)
-                t2 = threading.Thread(target=crawl)
+                t1 = threading.Thread(target=consume().start())
+                t2 = threading.Thread(target=consume().start())
                 t1.start()
                 t2.start()
                 t1.join()
