@@ -36,10 +36,3 @@ def toProducerKey(category):
 
 def toConsumedKey(category):
     return 'consumed_' + toProducerKey(category)
-
-
-if __name__ == '__main__':
-    pyredis = PyRedis()
-    redis = pyredis.get_resource()
-    redis.lpush('test', 'test xxxx')
-    print(redis.lpop('test'))
