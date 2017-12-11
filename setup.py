@@ -5,7 +5,10 @@ install_requires = [
     'beautifulsoup4',
     'lxml',
     'requests',
-    'stackshare'
+    'stackshare',
+    'sqlalchemy',
+    'PyMySQL',
+    'redis'
 ]
 
 setup(
