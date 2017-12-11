@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import requests
 from bs4 import BeautifulSoup
-from stackshare.exceptions import InvalidValueException
+from stackshare.src.exceptions import InvalidValueException
 
-from stackshare.src import get_item
+from config import GetLogger
 from stackshare.src import constants
 
 
@@ -26,6 +26,7 @@ class PicGetter:
 
     @staticmethod
     def __fetch_pic(url=None, pic_name=None, path=None):
+        logger = GetLogger(__name__).get_logger()
         if url is None:
             return None
         if path is None:
@@ -36,9 +37,10 @@ class PicGetter:
                 with open(path + pic_name, 'wb') as f:
                     f.write(response.content)
                     f.close()
-                    print('download %s succeed' % pic_name)
-        except Exception as e:
-            print('download %s error: ' % pic_name + str(e))
+                    # print('download %s succeed' % pic_name)
+                    logger.info('download %s succeed' % pic_name)
 
-if __name__ == '__main__':
-    PicGetter.get_apps_icon_by_ids(ids=[18, 1171], category=get_item.get_categories()[0])
+        except Exception as e:
+            # print('download %s error: ' % pic_name + str(e))
+            logger.warn('download %s error: ' % pic_name + str(e))
+

@@ -9,7 +9,7 @@ from stackshare import consumer, producer
 
 from stackshare.src import get_item
 
-categories = get_item.get_categories()
+from config import GetLogger
 
 # if __name__ == '__main__':
 #     print('there are %s categories: ' % len(categories))
@@ -21,20 +21,28 @@ categories = get_item.get_categories()
 
 
 def crawl():
+    categories = get_item.get_categories()
     for category in categories:
         consumer.start(category)
 
 
 def main(argv):
+    logger = GetLogger(__name__).get_logger()
     try:
-        opts, args = getopt.getopt(argv, "hpc", ["producer", "consumer"])
+        opts, args = getopt.getopt(argv, "pc", ["producer", "consumer"])
     except getopt.GetoptError:
-        print('usage: main.py -p # producer mode')
-        print(      ' main.py -c # consumer mode')
+        print('usage: main.py -p')
+        print('       main.py -c')
+        print('-p producer ,-c consumer')
+        sys.exit(2)
+    if len(opts) == 0:
+        print('usage: main.py -p')
+        print('       main.py -c')
+        print('-p producer ,-c consumer')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-p", "--producer"):
-            print('producer start working...')
+            logger.info(msg='producer start working...')
             try:
                 # consumer.start()
                 t1 = threading.Thread(target=producer.start)
@@ -46,7 +54,7 @@ def main(argv):
             except Exception as e:
                 print(e)
         elif opt in ("-c", "--consumer"):
-            print('consumer start working...')
+            logger.info(msg='consumer start working...')
             try:
                 # producer.start()
                 t1 = threading.Thread(target=crawl)
