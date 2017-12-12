@@ -4,7 +4,9 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+from config import GetLogger
 from stackshare.src import constants
+logger = GetLogger('get_item').get_logger()
 
 
 def get_categories(category=None):
@@ -55,15 +57,20 @@ def get_item(ids=None, url_category=None):
     datasource = {'ids[]': []}
     for app_id in ids:
         datasource['ids[]'].append(app_id)
+    logger.debug(msg='Get_item: Start request ' + url_category)
     req = requests.post(constants.DOMAIN + url_category + '/load-more', data=datasource)
+    logger.debug(msg='Get_item: Request ' + url_category + ' succeed')
     soup = BeautifulSoup(req.text, 'lxml')
     for data in soup.find_all('div', 'thumbnail-home'):
-        res.append({
-            'url': data.find('a')['href'],
-            'name': data.find('span', itemprop='keywords').get_text(),
-            'id': data.find('td', id='reasons-list-tile')['data-service-id'] # TODO bugfix id可能不存在？？
-        })
+        try:
+            res.append({
+                'url': data.find('a')['href'],
+                'name': data.find('span', itemprop='keywords').get_text()
+            })
+        except Exception as e:
+            print(e)
     return res
+
 
 if __name__ == '__main__':
     get_item([18], '/application_and_data')

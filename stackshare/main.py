@@ -5,11 +5,9 @@ import sys
 
 import getopt
 
-from stackshare import consumer, producer
 from stackshare.consumer import consume
 from stackshare.producer import produce
 
-from stackshare.src import get_item
 
 from config import GetLogger
 
@@ -20,7 +18,7 @@ from config import GetLogger
 #         print('%s. %s' % (++index, category))
 #     i = input()
 #     consume = consumer.start(categories[i])
-
+from stackshare.src.utils import prepareCategories
 
 
 def main(argv):
@@ -45,22 +43,19 @@ def main(argv):
                 t2 = threading.Thread(target=produce().start)
                 t1.start()
                 t2.start()
-                t1.join()
-                t2.join()
             except Exception as e:
                 print(e)
         elif opt in ("-c", "--consumer"):
             logger.info(msg='consumer start working...')
+            prepareCategories()
             try:
                 t1 = threading.Thread(target=consume().start())
                 t2 = threading.Thread(target=consume().start())
                 t1.start()
                 t2.start()
-                t1.join()
-                t2.join()
             except Exception as e:
                 print(e)
-    # TODO 将category 放进 QUEUE
+
 
 
 if __name__ == '__main__':

@@ -3,10 +3,14 @@ import json
 
 import requests
 from bs4 import BeautifulSoup
+
+from config import GetLogger
 from stackshare.src.exceptions import InvalidValueException, RequestErrorException
 
 from stackshare.models.stacks import Stacks
 from stackshare.src import constants
+
+logger = GetLogger('item_info').get_logger()
 
 
 class itemInfo:
@@ -99,7 +103,9 @@ class itemInfo:
     def __check_url(self):
         if self.__app_url is None:
             raise InvalidValueException(msg='app_url cannot be null')
+        logger.debug(msg='Item_info: Start request ' + self.__app_url)
         response = requests.get(constants.DOMAIN + self.__app_url)
+        logger.debug(msg='Item_info: Request ' + self.__app_url + ' Succeed...')
         if response.status_code != 200:
             raise RequestErrorException(msg=response.status_code)
         self.__soup = BeautifulSoup(response.text, 'lxml')

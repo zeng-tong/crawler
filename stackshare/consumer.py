@@ -34,8 +34,6 @@ class consume:
                     session.add(stacks)
                     session.commit()
                     self.logger.info(msg=item['name'] + ' save to mysql succeed...')
-                    # 将 id 加入已爬取 hash. 避免重复爬取
-                    redis.hset(name=toConsumedKey(self.category), key=item['id'], value=CONSUMED)
                 except Exception as e:
                     self.logger.warn(e)
                     self.logger.warn(msg='App 「%s」 under category %s insert error.Please noticing.' % (item['name'], self.category))
@@ -43,6 +41,8 @@ class consume:
                 finally:
                     session.close()
             ids = self.__get_ids(20)
+            # 将 id 加入已爬取 hash. 避免重复爬取
+            redis.sadd(toConsumedKey(category=self.category), ids)
         # 该category下id消费完, 移出category
         redis.srem(CATEGORY_KEY, self.category)
         self.logger.info(msg='Process finished...')
