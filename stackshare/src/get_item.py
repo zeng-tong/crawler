@@ -61,6 +61,9 @@ def get_item(ids=None, url_category=None):
         res.append({
             'url': data.find('a')['href'],
             'name': data.find('span', itemprop='keywords').get_text(),
-            'id': data.find('td', id='reasons-list-tile')['data-service-id']
+            'id': data.find('td', id='reasons-list-tile')['data-service-id'] # TODO bugfix id可能不存在？？
         })
     return res
+
+if __name__ == '__main__':
+    get_item([18], '/application_and_data')

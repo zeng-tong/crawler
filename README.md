@@ -25,3 +25,6 @@ open Preference -> Build, Execution, Deployment -> Buildout Support -> Enable bu
 - 存入数据库的信息中，可能存在 emoji 表情. 为避免插入失败数据库编码设置为`utf8mb4` 参见: [How to store Emoji Character in My SQL Database
 ](https://stackoverflow.com/questions/39463134/how-to-store-emoji-character-in-my-sql-database)
 - MySQL :  `root:123456@138.197.95.94/stackshare?charset=utf8`
+
+采坑记录：
+1. PyRedis 获取出的数据为 byte 类型，需手动转换..
