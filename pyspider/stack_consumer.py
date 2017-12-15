@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*-
 # Created on 2017-12-15 14:43:11
 # Project: stackshare_consumer
-
-import requests
+import uuid
 import json
 import redis
 from pyspider.libs.base_handler import *
@@ -37,23 +36,20 @@ class Handler(BaseHandler):
         for each in div.find_all('a'):
             if each['href'] == '/trending/new':
                 continue
-            # self.crawl(URL + each['href'], callback=self.get_item, priority=1)
+            # 绕过 crawl 相同 URL 只执行一次
+            self.crawl(URL + each['href'] + '/?' + str(uuid.uuid1()), callback=self.get_item, priority=1)
             self.crawl(URL + each['href'], save={'category': str(each['href']).replace('/', '')},
                        callback=self.get_items_ids, priority=2)
 
     def get_items_ids(self, response):
-
-        self.get_item(response)
 
         redis = redis_resource()
         _id = redis.rpop(response.save['category'])
         while _id:
             _id = int(_id)
             payload = {'ids[]': _id}
-
-            req = requests.post(response.url + '/load-more', data=payload)
-            self.get_item(req)
-            # self.crawl(response.url + '/load-more', data=payload, method='POST', callback=self.get_item)
+            self.crawl(response.url + '/load-more' + '/?' + str(uuid.uuid1()), data=payload, method='POST',
+                       callback=self.get_item)
             redis.sadd(consumedKey(response.save['category']), _id)
             _id = redis.rpop(response.save['category'])
 

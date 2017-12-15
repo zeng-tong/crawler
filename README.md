@@ -29,7 +29,23 @@ open Preference -> Build, Execution, Deployment -> Buildout Support -> Enable bu
 采坑记录：
 1. PyRedis 获取出的数据为 byte 类型，需手动转换..
 2. Logging 输出日志有重复的数据.原因：
-> loggers 就是程序可以直接调用的一个日志接口，可以直接向logger写入日志信息。logger并不是直接实例化使用的，而是通过logging.getLogger(name)来获取对象，事实上logger对象是单例模式，logging是多线程安全的，也就是无论程序中哪里需要打日志获取到的logger对象都是同一个。但是不幸的是logger并不支持多进程，这个在后面的章节再解释，并给出一些解决方案。
+    > loggers 就是程序可以直接调用的一个日志接口，可以直接向logger写入日志信息。logger并不是直接实例化使用的，而是通过logging.getLogger(name)来获取对象，事实上logger对象是单例模式，logging是多线程安全的，也就是无论程序中哪里需要打日志获取到的logger对象都是同一个。但是不幸的是logger并不支持多进程，这个在后面的章节再解释，并给出一些解决方案。
 【注意】loggers对象是有父子关系的，当没有父logger对象时它的父对象是root，当拥有父对象时父子关系会被修正。举个例子logging.getLogger("abc.xyz")会创建两个logger对象，一个是abc父对象，一个是xyz子对象，同时abc没有父对象所以它的父对象是root。但是实际上abc是一个占位对象（虚的日志对象），可以没有handler来处理日志。但是root不是占位对象，如果某一个日志对象打日志时，它的父对象会同时收到日志，所以有些使用者发现创建了一个logger对象时会打两遍日志，就是因为他创建的logger打了一遍日志，同时root对象也打了一遍日志。
-
 [来源简书 作者：doudou0o](http://www.jianshu.com/p/d615bf01e37b)
+
+3. pyspider 的 crawl 函数，经调试发现相同 URL 只请求一次。即是若两个 crawl 函数请求的 URL 相同，则完成第一个 crawl 函数之后，第二个 crawl 函数不会再被调用。
+```python
+# 每次请求的 URL 不同，可正常工作 
+for each in div.find_all('a'):
+            self.crawl(URL + each['href'], callback=self.get_item) 
+            
+# 每次请求的 URL 相同, 即便 payload 不一样,也不能正常工作,只能完成第一次请求.
+while _id:
+    _id = int(_id)
+    payload = {'ids[]': _id}
+    self.crawl(response.url + '/load-more', data=payload, method='POST', callback=self.get_item)
+    redis.sadd(consumedKey(response.save['category']), _id)
+    _id = redis.rpop(response.save['category'])
+
+# p.s : 未深究源码, 不知理解是否偏差,若有错误还望指教~
+```
