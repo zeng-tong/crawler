@@ -6,18 +6,11 @@ import sys
 import getopt
 
 from stackshare.consumer import consume
-from stackshare.producer import produce
 
+from stackshare.producer import produce
 
 from config import GetLogger
 
-# if __name__ == '__main__':
-#     print('there are %s categories: ' % len(categories))
-#     index = -1
-#     for category in categories:
-#         print('%s. %s' % (++index, category))
-#     i = input()
-#     consume = consumer.start(categories[i])
 from stackshare.src.utils import prepareCategories
 
 
@@ -55,7 +48,6 @@ def main(argv):
                 t2.start()
             except Exception as e:
                 print(e)
-
 
 
 if __name__ == '__main__':

@@ -15,7 +15,7 @@ def mysql_session():
     return DBSession()
 
 
-redis_pool = redis.ConnectionPool(host='138.197.95.94', port=6379)
+redis_pool = redis.ConnectionPool(host='127.0.0.1', port=6379)
 
 
 class PyRedis:

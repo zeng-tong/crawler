@@ -50,8 +50,8 @@ def get_items_ids(url_category=None):
 
 
 # 通过app_id获取 url 和 app_name
-def get_item(ids=None, url_category=None):
-    res = []
+def get_items(ids=None, url_category=None):
+
     if ids is None or url_category is None:
         return None
     datasource = {'ids[]': []}
@@ -60,7 +60,12 @@ def get_item(ids=None, url_category=None):
     logger.debug(msg='Get_item: Start request ' + url_category)
     req = requests.post(constants.DOMAIN + url_category + '/load-more', data=datasource)
     logger.debug(msg='Get_item: Request ' + url_category + ' succeed')
-    soup = BeautifulSoup(req.text, 'lxml')
+    return get_item(req)
+
+
+def get_item(response):
+    soup = BeautifulSoup(response.text, 'lxml')
+    res = []
     for data in soup.find_all('div', 'thumbnail-home'):
         try:
             res.append({
@@ -69,8 +74,9 @@ def get_item(ids=None, url_category=None):
             })
         except Exception as e:
             print(e)
+            return None
     return res
 
 
 if __name__ == '__main__':
-    get_item([18], '/application_and_data')
+    get_items([18], '/application_and_data')

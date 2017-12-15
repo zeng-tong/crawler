@@ -9,7 +9,7 @@ install:
   - bin/buildout
 script:
   - chmod +x stackshare/*
-  - bin/bs4 stackshare/src/get_item.py
+  - bin/bs4 stackshare/src/get_items.py
   - bin/bs4 stackshare/src/pic_getter.py
   - bin/bs4 stackshare/src/item_info.py
   - bin/bs4 stackshare/src/pic_getter.py
