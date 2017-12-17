@@ -7,7 +7,7 @@ from stackshare.src.utils import PyRedis, toProducerKey, toConsumedKey
 
 from stackshare.src import get_item
 
-from stackshare.src.utils import mysql_session
+from config import mysql_session
 
 from stackshare.src.item_info import itemInfo
 

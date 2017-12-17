@@ -17,7 +17,6 @@ class Stacks(Base):
     fans_count = Column(String)
     stacks_count = Column(String)
     integrations_count = Column(String)
-    companies = Column(String)
     name = Column(String)
 
     def __repr__(self):
