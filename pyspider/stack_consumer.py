@@ -84,6 +84,7 @@ class itemInfo:
         try:
             return {
                 'name': self.name,
+                'logo': self.logo(),
                 'contents': json.dumps(self.contents()),
                 'description': self.description(),
                 'star_count': self.count(count_type='star'),
@@ -95,6 +96,10 @@ class itemInfo:
         except Exception as e:
             print(e)
             return None
+
+    def logo(self):
+        div = self.__soup.find('div', 'sp-service-logo col-md-2 col-xs-12')
+        return div.find('img', itemprop='image')['src']
 
     # 获取app的目录
     def contents(self):
