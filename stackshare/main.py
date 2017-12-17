@@ -5,6 +5,7 @@ import sys
 
 import getopt
 
+from stackshare import companies
 from stackshare.consumer import consume
 
 from stackshare.producer import produce
@@ -20,13 +21,15 @@ def main(argv):
         opts, args = getopt.getopt(argv, "pc", ["producer", "consumer"])
     except getopt.GetoptError:
         print('usage: main.py -p')
+        print('       main.py -s')
         print('       main.py -c')
-        print('-p producer ,-c consumer')
+        print('-p producer ,-s consumer, -c companies')
         sys.exit(2)
     if len(opts) == 0:
         print('usage: main.py -p')
+        print('       main.py -s')
         print('       main.py -c')
-        print('-p producer ,-c consumer')
+        print('-p producer ,-s consumer, -c companies')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-p", "--producer"):
@@ -38,7 +41,7 @@ def main(argv):
                 t2.start()
             except Exception as e:
                 print(e)
-        elif opt in ("-c", "--consumer"):
+        elif opt in ("-s", "--consumer"):
             logger.info(msg='consumer start working...')
             prepareCategories()
             try:
@@ -46,6 +49,12 @@ def main(argv):
                 t2 = threading.Thread(target=consume().start())
                 t1.start()
                 t2.start()
+            except Exception as e:
+                print(e)
+        elif opt in ("-c", "--companies"):
+            logger.info(msg='companies start working...')
+            try:
+                companies.start()
             except Exception as e:
                 print(e)
 
