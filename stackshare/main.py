@@ -5,25 +5,14 @@ import sys
 
 import getopt
 
-from stackshare import consumer, producer
+from stackshare import companies
+from stackshare.consumer import consume
 
-from stackshare.src import get_item
+from stackshare.producer import produce
 
 from config import GetLogger
 
-# if __name__ == '__main__':
-#     print('there are %s categories: ' % len(categories))
-#     index = -1
-#     for category in categories:
-#         print('%s. %s' % (++index, category))
-#     i = input()
-#     consume = consumer.start(categories[i])
-
-
-def crawl():
-    categories = get_item.get_categories()
-    for category in categories:
-        consumer.start(category)
+from stackshare.src.utils import prepareCategories
 
 
 def main(argv):
@@ -32,40 +21,42 @@ def main(argv):
         opts, args = getopt.getopt(argv, "pc", ["producer", "consumer"])
     except getopt.GetoptError:
         print('usage: main.py -p')
+        print('       main.py -s')
         print('       main.py -c')
-        print('-p producer ,-c consumer')
+        print('-p producer ,-s consumer, -c companies')
         sys.exit(2)
     if len(opts) == 0:
         print('usage: main.py -p')
+        print('       main.py -s')
         print('       main.py -c')
-        print('-p producer ,-c consumer')
+        print('-p producer ,-s consumer, -c companies')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-p", "--producer"):
             logger.info(msg='producer start working...')
             try:
-                # consumer.start()
-                t1 = threading.Thread(target=producer.start)
-                t2 = threading.Thread(target=producer.start)
+                t1 = threading.Thread(target=produce().start)
+                t2 = threading.Thread(target=produce().start)
                 t1.start()
                 t2.start()
-                t1.join()
-                t2.join()
             except Exception as e:
                 print(e)
-        elif opt in ("-c", "--consumer"):
+        elif opt in ("-s", "--consumer"):
             logger.info(msg='consumer start working...')
+            prepareCategories()
             try:
-                # producer.start()
-                t1 = threading.Thread(target=crawl)
-                t2 = threading.Thread(target=crawl)
+                t1 = threading.Thread(target=consume().start())
+                t2 = threading.Thread(target=consume().start())
                 t1.start()
                 t2.start()
-                t1.join()
-                t2.join()
             except Exception as e:
                 print(e)
-    # TODO 将category 放进 QUEUE
+        elif opt in ("-c", "--companies"):
+            logger.info(msg='companies start working...')
+            try:
+                companies.start()
+            except Exception as e:
+                print(e)
 
 
 if __name__ == '__main__':

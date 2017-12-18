@@ -13,3 +13,4 @@ script:
   - bin/bs4 stackshare/src/pic_getter.py
   - bin/bs4 stackshare/src/item_info.py
   - bin/bs4 stackshare/src/pic_getter.py
+  - bin/bs4 stackshare/src/companies_info.py
