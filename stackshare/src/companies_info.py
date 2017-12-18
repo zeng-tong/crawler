@@ -46,6 +46,7 @@ class companies_info:
             for each in detail_soup.find_all('div', 'col-md-1 stack-logo'):
                 companies.append({'company': each.find('img')['alt'], 'logo': each.find('img')['src']})
             yield companies
+            # 避免下次重复插入
+            companies = []
             payload['page'] = payload['page'] + 1
             page = requests.post(url, data=payload)
-        return companies
