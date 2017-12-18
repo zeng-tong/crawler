@@ -2,7 +2,7 @@
 import requests
 from config import GetLogger
 from stackshare.src import get_item, constants, companies_info
-from stackshare.src.utils import mysql_session
+from config import mysql_session
 
 logger = GetLogger('companies').get_logger()
 

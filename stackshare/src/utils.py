@@ -1,12 +1,8 @@
 # -*-coding: utf-8 -*-
-from sqlalchemy import create_engine
 
-import redis
-from sqlalchemy.orm import sessionmaker
-
+from config import PyRedis
 from stackshare.src import get_item
 from stackshare.src.constants import CATEGORY_KEY
-from stackshare.src.exceptions import RequestErrorException
 
 def toProducerKey(category):
     return str(category).replace('/', '')
