@@ -6,7 +6,7 @@ Base = declarative_base()
 
 class Companies(Base):
 
-    __tablename__ = 'companies'
+    __tablename__ = 'companies_info'
 
     id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
     company_name = Column(String, nullable=False)

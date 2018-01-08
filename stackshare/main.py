@@ -59,6 +59,7 @@ def main(argv):
                 Company().start()
             except Exception as e:
                 print(e)
+                print('Exit with exceptions')
 
 
 if __name__ == '__main__':

@@ -28,7 +28,11 @@ class Company:
         items = get_item.get_item(requests.get(constants.DOMAIN + category))
         for item in items:
             result = companies_info.CompaniesInfo(item['url']).companies()
-            companies = next(result)
+            try:
+                companies = next(result)
+            except:
+                print('next error , {} now skipped'.format(item['url']))
+                continue
             while companies:
                 for entity in companies:
                     try:
@@ -39,10 +43,13 @@ class Company:
                         logger.info(msg='Company 「' + entity.company_name + '」under ' + item['name'] + ' save to mysql succeed...')
                     except Exception as e:
                         print(e)
+                        print('Exception when save to MySQL ,plz check...')
                     finally:
                         session.close()
-                companies = next(result)
-
+                try:
+                    companies = next(result)
+                except:
+                    print('next companies error ,{} now skipped'.format(item['url']))        
 
 if __name__ == '__main__':
     prepareCategories()
