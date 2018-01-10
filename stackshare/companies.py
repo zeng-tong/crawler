@@ -1,10 +1,12 @@
 # -*- utf-8 -*-
 import requests
+
 from config import GetLogger, PyRedis
-from stackshare.src import get_item, constants, companies_info
 from config import mysql_session
-from stackshare.src.constants import CATEGORY_KEY
-from stackshare.src.utils import prepareCategories
+from stackshare.src.Service import CompaniesInfoService, ItemService
+from stackshare.src.Utils import constants
+from stackshare.src.Utils.constants import CATEGORY_KEY
+from stackshare.src.Utils.utils import prepareCategories
 
 logger = GetLogger('companies').get_logger()
 
@@ -20,18 +22,19 @@ class Company:
             if category == '/trending/new':
                 category = self.__redis.spop(CATEGORY_KEY)
                 continue
-            self.save(category)
+            self.persist(category)
             category = self.__redis.spop(CATEGORY_KEY)
-        logger.info(msg='Process finished')
+        logger.info(msg='Category 「%s」 Process finished' % category)
 
-    def save(self, category):
-        items = get_item.get_item(requests.get(constants.DOMAIN + category))
+    def persist(self, category):
+        items = ItemService.item(requests.get(constants.DOMAIN + category))
         for item in items:
-            result = companies_info.CompaniesInfo(item['url']).companies()
+            result = CompaniesInfoService.CompaniesInfo(item['url']).companies()
             try:
                 companies = next(result)
-            except:
+            except Exception as e:
                 print('next error , {} now skipped'.format(item['url']))
+                logger.error(e)
                 continue
             while companies:
                 for entity in companies:
@@ -48,9 +51,9 @@ class Company:
                         session.close()
                 try:
                     companies = next(result)
-                except:
-                    print('next companies error ,{} now skipped'.format(item['url']))        
-
+                except Exception as e:
+                    print('next companies error ,{} now skipped'.format(item['url']))
+                    logger.error(e)
 if __name__ == '__main__':
     prepareCategories()
     Company().start()

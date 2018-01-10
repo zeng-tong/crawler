@@ -5,10 +5,9 @@ import requests
 from bs4 import BeautifulSoup
 
 from config import GetLogger
-from stackshare.src.exceptions import InvalidValueException, RequestErrorException
-
-from stackshare.models.stacks import Stacks
-from stackshare.src import constants
+from stackshare.src.Utils import constants
+from stackshare.src.Utils.exceptions import InvalidValueException, RequestErrorException
+from stackshare.src.models.stacks import Stacks
 
 logger = GetLogger('item_info').get_logger()
 

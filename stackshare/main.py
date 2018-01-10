@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
+import getopt
+import sys
 import threading
 
-import sys
-
-import getopt
-
-from stackshare import companies
+from config import GetLogger
 from stackshare.companies import Company
 from stackshare.consumer import consume
-
 from stackshare.producer import produce
-
-from config import GetLogger
-
-from stackshare.src.utils import prepareCategories
+from stackshare.src.Utils.utils import prepareCategories
 
 
 def main(argv):

@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
+import datetime
 import logging
 import logging.handlers
-
-
-import datetime
-
 import sys
 
 import redis
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from stackshare.src.exceptions import RequestErrorException
+from stackshare.src.Utils.exceptions import RequestErrorException
 
 
 class GetLogger:

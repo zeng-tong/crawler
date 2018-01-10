@@ -2,9 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 
 from config import PyRedis
-from stackshare.models.companies import Companies
-from stackshare.src import constants
-from stackshare.src.exceptions import InvalidValueException
+from stackshare.src.Utils import constants
+from stackshare.src.Utils.exceptions import InvalidValueException
+from stackshare.src.models.companies import Companies
 
 
 class CompaniesInfo:
@@ -32,12 +32,11 @@ class CompaniesInfo:
         text = company_soup.find('a', id='service-stacks-load-more')
         if text is None:
             raise InvalidValueException(msg='cannot get %s id, cookie may expired ' % self.__app_url)
-            print('cookie expired')
         for each in company_soup.find('div', 'companies-using-service').find_all('div', 'col-md-1 stack-logo'):
             companies.append({'company': each.find('img')['alt'], 'logo': each.find('img')['src']})
 
         app_id = text['data-service-id']
-        print('{} and {}'.format(self.__app_url ,app_id))
+        print('{} and {}'.format(self.__app_url, app_id))
         # request data page by page.
         page = self.redis.hget('companies_page', self.__app_url)
 

@@ -44,14 +44,14 @@ class Handler(BaseHandler):
     def get_items_ids(self, response):
 
         redis = redis_resource()
-        _id = redis.rpop(response.save['category'])
+        _id = redis.rpop(response.persist['category'])
         while _id:
             _id = int(_id)
             payload = {'ids[]': _id}
             self.crawl(response.url + '/load-more' + '/?' + str(uuid.uuid1()), data=payload, method='POST',
                        callback=self.get_item)
-            redis.sadd(consumedKey(response.save['category']), _id)
-            _id = redis.rpop(response.save['category'])
+            redis.sadd(consumedKey(response.persist['category']), _id)
+            _id = redis.rpop(response.persist['category'])
 
     def get_item(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
@@ -62,7 +62,7 @@ class Handler(BaseHandler):
 
     def get_info(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
-        stacks = itemInfo(name=response.save['name'], soup=soup, app_url=response.save['app_url']).get_stacks()
+        stacks = itemInfo(name=response.persist['name'], soup=soup, app_url=response.persist['app_url']).get_stacks()
         return stacks
 
 

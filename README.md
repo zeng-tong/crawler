@@ -81,8 +81,8 @@ while _id:
     _id = int(_id)
     payload = {'ids[]': _id}
     self.crawl(response.url + '/load-more', data=payload, method='POST', callback=self.get_item)
-    redis.sadd(consumedKey(response.save['category']), _id)
-    _id = redis.rpop(response.save['category'])
+    redis.sadd(consumedKey(response.persist['category']), _id)
+    _id = redis.rpop(response.persist['category'])
 
 # p.s : 未深究源码, 不知理解是否偏差,若有错误还望指教~
 ```
