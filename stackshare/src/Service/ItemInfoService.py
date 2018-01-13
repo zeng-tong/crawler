@@ -5,8 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 
 from config import GetLogger
-from stackshare.src.Utils import constants
-from stackshare.src.Utils.exceptions import InvalidValueException, RequestErrorException
+from stackshare.src.Utils.constants import DOMAIN
+from stackshare.src.Utils.exceptions import InvalidValueException
 from stackshare.src.models.stacks import Stacks
 
 logger = GetLogger('item_info').get_logger()
@@ -15,8 +15,6 @@ logger = GetLogger('item_info').get_logger()
 class itemInfo:
 
     __soup = None
-    __app_url = ''
-    name = ''
 
     APP_INFO_TYPE_MAP = {
         'fans': '/fans/ajax',
@@ -29,6 +27,7 @@ class itemInfo:
     def get_stacks(self):
         try:
             res = {
+                'name': self.name(),
                 'contents': json.dumps(self.contents()),
                 'description': self.description(),
                 'star_count': self.count(count_type='star'),
@@ -40,18 +39,17 @@ class itemInfo:
             return Stacks(contents=res['contents'], description=res['description'],
                           star_count=res['star_count'], votes_count=res['votes_count'],
                           stacks_count=res['stacks_count'], fans_count=res['fans_count'],
-                          integrations_count=res['integrations_count'], name=self.name)
+                          integrations_count=res['integrations_count'], name=res['name'])
         except Exception as e:
             print(e)
             return None
 
-    def __init__(self, app_url, name=None):
-        self.__app_url = app_url
-        self.__check_url()
-        if name is not None:
-            self.name = name
-        else:
-            self.name = str(app_url).replace('/', '')
+    def __init__(self, text):
+        self.__soup = BeautifulSoup(text, 'lxml')
+        self.stack_token = self.__soup.find('meta', property='og:url')['content'].replace(DOMAIN, '')
+
+    def name(self):
+        return self.__soup.find('div', id='service-name').find('a', itemprop='name').get_text()
 
     # 获取app的目录
     def contents(self):
@@ -72,18 +70,9 @@ class itemInfo:
         if count_type == 'star':
             return self.__soup.find('div', 'star-count').get_text()
         else:
-            label, cnt = self.__soup.select('a[data-href=%s%s]' % (self.__app_url, self.APP_INFO_TYPE_MAP[count_type]))[0].stripped_strings
+            label, cnt = self.__soup.select('a[data-href=%s%s]' % (self.stack_token, self.APP_INFO_TYPE_MAP[count_type]))[0].stripped_strings
             return cnt
 
-    def __check_url(self):
-        if self.__app_url is None:
-            raise InvalidValueException(msg='app_url cannot be null')
-        logger.debug(msg='Item_info: Start request ' + self.__app_url)
-        response = requests.get(constants.DOMAIN + self.__app_url)
-        logger.debug(msg='Item_info: Request ' + self.__app_url + ' Succeed...')
-        if response.status_code != 200:
-            raise RequestErrorException(msg=response.status_code)
-        self.__soup = BeautifulSoup(response.text, 'lxml')
-
 if __name__ == '__main__':
-    itemInfo(app_url='/python', name='Python')
+    resp = requests.get(DOMAIN + '/bootstrap')
+    itemInfo(resp.text).get_stacks()

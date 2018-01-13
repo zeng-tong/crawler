@@ -1,4 +1,5 @@
 # -*-coding: utf-8 -*-
+import asyncio
 
 from config import PyRedis
 from stackshare.src.Service import ItemService
@@ -19,3 +20,5 @@ def prepareCategories():
         # category 加入 QUEUE
         if category != '/trending/new':
             __redis.sadd(CATEGORY_KEY, category)
+
+loop = asyncio.get_event_loop()

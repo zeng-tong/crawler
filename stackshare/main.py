@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import getopt
 import sys
-import threading
 
 from config import GetLogger
 from stackshare.companies import Company
@@ -30,20 +29,14 @@ def main(argv):
         if opt in ("-p", "--producer"):
             logger.info(msg='producer start working...')
             try:
-                t1 = threading.Thread(target=produce().start)
-                t2 = threading.Thread(target=produce().start)
-                t1.start()
-                t2.start()
+                produce().start()
             except Exception as e:
                 print(e)
         elif opt in ("-s", "--consumer"):
             logger.info(msg='consumer start working...')
             prepareCategories()
             try:
-                t1 = threading.Thread(target=consume().start())
-                t2 = threading.Thread(target=consume().start())
-                t1.start()
-                t2.start()
+                consume().start()
             except Exception as e:
                 print(e)
         elif opt in ("-c", "--companies"):
