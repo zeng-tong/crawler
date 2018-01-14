@@ -6,6 +6,8 @@ from stackshare.src.Utils import constants
 from stackshare.src.models.company import Companies
 
 logger = GetLogger('CompanyService').get_logger()
+
+
 class CompanyService:
 
     def __init__(self, _soup):

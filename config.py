@@ -31,7 +31,7 @@ class GetLogger:
 
 
 def mysql_session():
-    engine = create_engine('mysql+pymysql://root@127.0.0.1/stackshare?charset=utf8')
+    engine = create_engine('mysql+pymysql://root@127.0.0.1/stackshare?charset=utf8mb4')
     DBSession = sessionmaker(bind=engine)
     return DBSession()
 
