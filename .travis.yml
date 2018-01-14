@@ -12,4 +12,4 @@ script:
   - bin/bs4 stackshare/src/Service/ItemService.py
   - bin/bs4 stackshare/src/Utils/pic_getter.py
   - bin/bs4 stackshare/src/Service/ItemInfoService.py
-  - bin/bs4 stackshare/src/Service/CompaniesInfoService.py
+  - bin/bs4 stackshare/src/Service/CompanyService.py
