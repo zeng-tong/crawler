@@ -1,4 +1,7 @@
 # -*- utf-8 -*-
+import asyncio
+
+import aiohttp
 import requests
 
 from config import GetLogger, PyRedis
@@ -6,7 +9,7 @@ from config import mysql_session
 from stackshare.src.Service import CompaniesInfoService, ItemService
 from stackshare.src.Utils import constants
 from stackshare.src.Utils.constants import CATEGORY_KEY
-from stackshare.src.Utils.utils import prepareCategories
+from stackshare.src.Utils.utils import prepareCategories, loop
 
 logger = GetLogger('companies').get_logger()
 
@@ -16,18 +19,33 @@ class Company:
         self.__redis = PyRedis().get_resource()
 
     def start(self):
+        tasks = []
         category = self.__redis.spop(CATEGORY_KEY)
         while category:
             category = str(category, encoding='utf-8')
             if category == '/trending/new':
                 category = self.__redis.spop(CATEGORY_KEY)
                 continue
-            self.persist(category)
+            tasks.append(self.fetch(constants.DOMAIN + category))
+            logger.info(msg='Category 「%s」 has putted into crawler' % category)
             category = self.__redis.spop(CATEGORY_KEY)
-        logger.info(msg='Category 「%s」 Process finished' % category)
+        pages = loop.run_until_complete(asyncio.gather(*tasks))
+        for page in pages:
+            self.persist(ItemService.item(page))
 
-    def persist(self, category):
-        items = ItemService.item(requests.get(constants.DOMAIN + category))
+    @staticmethod
+    async def fetch(url, payload=None, **kwargs):
+        async with aiohttp.ClientSession(loop=loop) as session:
+            if payload:
+                async with session.post(url=url, data=payload) as response:
+                    text = await response.text()
+                    return text
+            else:
+                async with session.get(url=url) as response:
+                    text = await response.text()
+                    return text
+
+    def persist(self, items):
         for item in items:
             result = CompaniesInfoService.CompaniesInfo(item['url']).companies()
             try:

@@ -3,7 +3,7 @@ import getopt
 import sys
 
 from config import GetLogger
-from stackshare.companies import Company
+from stackshare.company import Company
 from stackshare.consumer import consume
 from stackshare.producer import produce
 from stackshare.src.Utils.utils import prepareCategories
@@ -41,7 +41,6 @@ def main(argv):
                 print(e)
         elif opt in ("-c", "--companies"):
             logger.info(msg='companies start working...')
-            prepareCategories()
             try:
                 Company().start()
             except Exception as e:

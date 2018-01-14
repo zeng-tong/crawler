@@ -1,9 +1,11 @@
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
 
 from config import PyRedis
 from stackshare.src.Utils import constants
 from stackshare.src.Utils.exceptions import InvalidValueException
+from stackshare.src.Utils.utils import loop
 from stackshare.src.models.companies import Companies
 
 
@@ -22,6 +24,18 @@ class CompaniesInfo:
                 companies.append(Companies(company_name=company['company'], logo=company['logo']))
             yield companies
             page = next(result)
+
+    @staticmethod
+    async def fetch(url, payload=None, **kwargs):
+        async with aiohttp.ClientSession(loop=loop) as session:
+            if payload:
+                async with session.post(url=url, data=payload) as response:
+                    text = await response.text()
+                    return text
+            else:
+                async with session.get(url=url) as response:
+                    text = await response.text()
+                    return text
 
     def __companies(self):
         companies = []
@@ -58,3 +72,4 @@ class CompaniesInfo:
             payload['page'] = payload['page'] + 1
             self.redis.hset('companies_page', self.__app_url, payload['page'])
             page = requests.post(url, data=payload)
+

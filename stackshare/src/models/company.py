@@ -6,11 +6,13 @@ Base = declarative_base()
 
 class Companies(Base):
 
-    __tablename__ = 'companies_info'
-
+    __tablename__ = 'companies'
     id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
-    company_name = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    description = Column(String)
     logo = Column(String, nullable=False)
+    site = Column(String)
+    token = Column(String)
 
     def __repr__(self):
         return str(self.__dict__)
