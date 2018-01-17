@@ -16,9 +16,13 @@ $ bin/buildout //安装依赖,构建项目
 ```sql
 CREATE TABLE `companies` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `company_name` varchar(256) NOT NULL DEFAULT '',
+  `name` varchar(256) NOT NULL DEFAULT '',
+  `description` varchar(256) DEFAULT '',
   `logo` varchar(256) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `site` varchar(256) DEFAULT NULL,
+  `token` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 ```sql
@@ -33,7 +37,7 @@ CREATE TABLE `stacks` (
   `stacks_count` varchar(11) DEFAULT NULL,
   `integrations_count` varchar(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
 ### 启动
@@ -56,7 +60,7 @@ CREATE TABLE `stacks` (
 - pycharm 运行请注意 Working directory为 __crawler__ 而不是 __crawler/stackshare__
 - 存入数据库的信息中，可能存在 emoji 表情. 为避免插入失败数据库编码设置为`utf8mb4` 参见: [How to store Emoji Character in My SQL Database
 ](https://stackoverflow.com/questions/39463134/how-to-store-emoji-character-in-my-sql-database)
-- MySQL :  `root:123456@139.59.229.154/stackshare?charset=utf8`
+- ~~MySQL:  root:123456@139.59.229.154/stackshare?charset=utf8~~ ~~云主机数据库已移除~~
 
 ## Pyspider 版：
 ### 文件位置
