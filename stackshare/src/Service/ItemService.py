@@ -5,7 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 
 from config import GetLogger
-from stackshare.src import constants
+from stackshare.src.Utils import constants
+
 logger = GetLogger('get_item').get_logger()
 
 
@@ -60,10 +61,10 @@ def get_items(ids=None, url_category=None):
     logger.debug(msg='Get_item: Start request ' + url_category)
     req = requests.post(constants.DOMAIN + url_category + '/load-more', data=datasource)
     logger.debug(msg='Get_item: Request ' + url_category + ' succeed')
-    return get_item(req)
+    return item(req)
 
 
-def get_item(response):
+def item(response):
     soup = BeautifulSoup(response.text, 'lxml')
     res = []
     for data in soup.find_all('div', 'thumbnail-home'):

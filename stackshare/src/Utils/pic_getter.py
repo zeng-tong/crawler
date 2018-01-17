@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import requests
 from bs4 import BeautifulSoup
-from stackshare.src.exceptions import InvalidValueException
 
 from config import GetLogger
-from stackshare.src import constants
+from stackshare.src.Utils import constants
+from stackshare.src.Utils.exceptions import InvalidValueException
 
 
 class PicGetter:

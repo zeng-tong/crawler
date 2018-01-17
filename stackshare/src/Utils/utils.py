@@ -1,8 +1,9 @@
 # -*-coding: utf-8 -*-
+import asyncio
 
 from config import PyRedis
-from stackshare.src import get_item
-from stackshare.src.constants import CATEGORY_KEY
+from stackshare.src.Service import ItemService
+from stackshare.src.Utils.constants import CATEGORY_KEY
 
 def toProducerKey(category):
     return str(category).replace('/', '')
@@ -14,7 +15,10 @@ def toConsumedKey(category):
 
 def prepareCategories():
     __redis = PyRedis().get_resource()
-    categories = get_item.get_categories()
+    categories = ItemService.get_categories()
     for category in categories:
         # category 加入 QUEUE
-        __redis.sadd(CATEGORY_KEY, category)
+        if category != '/trending/new':
+            __redis.sadd(CATEGORY_KEY, category)
+
+loop = asyncio.get_event_loop()

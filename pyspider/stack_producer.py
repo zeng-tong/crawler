@@ -50,9 +50,9 @@ class Handler(BaseHandler):
             return ids
         redis = redis_resource()
         for _id in ids:
-            if redis.sismember(consumedKey(response.save['category']), _id):
-                print('id: %s under %s had already crawlered, auto skip done' % (_id, response.save['category']))
+            if redis.sismember(consumedKey(response.persist['category']), _id):
+                print('id: %s under %s had already crawlered, auto skip done' % (_id, response.persist['category']))
                 continue
             else:
-                redis.lpush(response.save['category'], _id)
-        return {response.save['category']: ids}
+                redis.lpush(response.persist['category'], _id)
+        return {response.persist['category']: ids}

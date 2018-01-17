@@ -1,19 +1,12 @@
 # -*- coding: utf-8 -*-
-import threading
-
+import getopt
 import sys
 
-import getopt
-
-from stackshare import companies
-from stackshare.companies import Company
-from stackshare.consumer import consume
-
-from stackshare.producer import produce
-
 from config import GetLogger
-
-from stackshare.src.utils import prepareCategories
+from stackshare.company import Company
+from stackshare.consumer import consume
+from stackshare.producer import produce
+from stackshare.src.Utils.utils import prepareCategories
 
 
 def main(argv):
@@ -36,29 +29,23 @@ def main(argv):
         if opt in ("-p", "--producer"):
             logger.info(msg='producer start working...')
             try:
-                t1 = threading.Thread(target=produce().start)
-                t2 = threading.Thread(target=produce().start)
-                t1.start()
-                t2.start()
+                produce().start()
             except Exception as e:
                 print(e)
         elif opt in ("-s", "--consumer"):
             logger.info(msg='consumer start working...')
             prepareCategories()
             try:
-                t1 = threading.Thread(target=consume().start())
-                t2 = threading.Thread(target=consume().start())
-                t1.start()
-                t2.start()
+                consume().start()
             except Exception as e:
                 print(e)
         elif opt in ("-c", "--companies"):
             logger.info(msg='companies start working...')
-            prepareCategories()
             try:
                 Company().start()
             except Exception as e:
                 print(e)
+                print('Exit with exceptions')
 
 
 if __name__ == '__main__':

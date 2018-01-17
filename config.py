@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
+import datetime
 import logging
 import logging.handlers
-
-
-import datetime
-
 import sys
 
 import redis
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from stackshare.src.exceptions import RequestErrorException
+from stackshare.src.Utils.exceptions import RequestErrorException
 
 
 class GetLogger:
@@ -34,7 +31,7 @@ class GetLogger:
 
 
 def mysql_session():
-    engine = create_engine('mysql+pymysql://root@127.0.0.1/stackshare?charset=utf8')
+    engine = create_engine('mysql+pymysql://root@127.0.0.1/stackshare?charset=utf8mb4')
     DBSession = sessionmaker(bind=engine)
     return DBSession()
 

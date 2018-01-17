@@ -8,7 +8,9 @@ install_requires = [
     'stackshare',
     'sqlalchemy',
     'PyMySQL',
-    'redis'
+    'redis',
+    'aiohttp',
+    'async_timeout'
 ]
 
 setup(
