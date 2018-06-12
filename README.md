@@ -1,4 +1,4 @@
-## 自建版
+## 自建版  [![Build Status](https://travis-ci.com/zeng-tong/crawler.svg?branch=master)](https://travis-ci.com/zeng-tong/crawler)
 ### 安装依赖
 ```shell
 $ python3 bootstrap-buildout.py //执行工程目录下的bootstrap-buildout.py, 初始化buildout
